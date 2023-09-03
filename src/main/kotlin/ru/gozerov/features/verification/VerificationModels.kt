@@ -12,3 +12,8 @@ data class VerificationCodeRequest(
 data class VerificationCodeResponse(
     val token: String
 )
+
+@Serializable
+data class CancelVerificationRequest(
+    val token: String
+)

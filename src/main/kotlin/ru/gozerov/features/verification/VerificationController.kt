@@ -16,4 +16,10 @@ class VerificationController(
         } ?: call.respond(HttpStatusCode.BadRequest, "Code isn`t valid")
     }
 
+    suspend fun removeVerificationToken(token: String) {
+        println(token)
+        VerificationTokens.deleteVerificationTokenByToken(token)
+        call.respond(HttpStatusCode.OK)
+    }
+
 }

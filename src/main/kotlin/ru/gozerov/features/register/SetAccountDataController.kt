@@ -8,7 +8,6 @@ import ru.gozerov.database.tokens.Tokens
 import ru.gozerov.database.users.UserDTO
 import ru.gozerov.database.users.Users
 import ru.gozerov.database.verification.VerificationTokens
-import ru.gozerov.features.login.LoginResponse
 import java.util.*
 
 class SetAccountDataController(
