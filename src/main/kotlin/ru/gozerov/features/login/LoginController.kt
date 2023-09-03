@@ -13,7 +13,7 @@ class LoginController(
 ) {
 
     suspend fun performLogin(loginRequest: LoginRequest) {
-        val user = Users.getUser(loginRequest.login)
+        val user = Users.getUserByEmail(loginRequest.email)
 
         if (user != null){
             if (user.password == loginRequest.password) {
@@ -21,16 +21,15 @@ class LoginController(
                 Tokens.insert(
                     TokenDTO(
                         id = UUID.randomUUID().toString(),
-                        login = loginRequest.login,
+                        userId = user.id,
                         token = token
                     )
                 )
                 call.respond(LoginResponse(token))
-
             } else
                 call.respond(HttpStatusCode.Unauthorized, "Wrong password")
         } else
-            call.respond(HttpStatusCode.BadRequest, "User not found ")
+            call.respond(HttpStatusCode.NotFound, "User not found")
     }
 
 }

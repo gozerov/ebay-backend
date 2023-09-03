@@ -6,6 +6,7 @@ import io.ktor.server.response.*
 import ru.gozerov.database.goods.GoodDTO
 import ru.gozerov.database.goods.Goods
 import ru.gozerov.database.tokens.Tokens
+import ru.gozerov.database.tokens.checkToken
 
 class GoodsController(
     private val call: ApplicationCall
@@ -24,7 +25,7 @@ class GoodsController(
                         images = addGoodRequest.images
                     )
                 )
-                call.respond(HttpStatusCode.Created, "Good has added")
+                call.respond(AddGoodResponse(isSuccessful = true))
             } else
                 call.respond(HttpStatusCode.BadRequest, "Good is already exist")
         } else
@@ -85,6 +86,5 @@ class GoodsController(
             call.respond(HttpStatusCode.BadRequest, "Token isn`t valid")
     }
 
-    private fun checkToken(token: String?): Boolean = Tokens.getTokens().firstOrNull { it.token == token } != null
 
 }

@@ -26,6 +26,11 @@ data class AddGoodRequest(
 )
 
 @Serializable
+data class AddGoodResponse(
+    val isSuccessful: Boolean
+)
+
+@Serializable
 data class GetGoodsSizeResponse(
     val count: Int
 )
