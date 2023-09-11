@@ -5,7 +5,6 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import ru.gozerov.database.goods.GoodDTO
 import ru.gozerov.database.goods.Goods
-import ru.gozerov.database.tokens.Tokens
 import ru.gozerov.database.tokens.checkToken
 
 class GoodsController(
@@ -13,7 +12,7 @@ class GoodsController(
 ) {
 
     suspend fun addGood(addGoodRequest: AddGoodRequest, token: String?) {
-        if (checkToken(token)) {
+        call.checkToken(token) {
             val isGoodDoesNotExist = Goods.getGoods()?.firstOrNull { it.name == addGoodRequest.name } == null
             if (isGoodDoesNotExist) {
                 Goods.insert(
@@ -28,14 +27,12 @@ class GoodsController(
                 call.respond(AddGoodResponse(isSuccessful = true))
             } else
                 call.respond(HttpStatusCode.BadRequest, "Good is already exist")
-        } else
-            call.respond(HttpStatusCode.BadRequest, "Token isn`t valid")
+        }
     }
 
     suspend fun getGoods(token: String?) {
-        if (checkToken(token)) {
+        call.checkToken(token) {
             val goods = Goods.getGoods()
-            println(goods.toString())
             if (goods != null && goods.isNotEmpty()) {
                 call.respond(GetGoodsResponse(
                     goods = goods.map { good ->
@@ -48,42 +45,34 @@ class GoodsController(
                         )
                     }
                 ))
-            }
-            else
+            } else
                 call.respond(HttpStatusCode.BadRequest, "No goods")
-        } else
-            call.respond(HttpStatusCode.BadRequest, "Token isn`t valid")
+        }
     }
 
     suspend fun getGoodsSize(token: String?) {
-        if (checkToken(token)) {
+        call.checkToken(token) {
             call.respond(GetGoodsSizeResponse(Goods.getGoodsSize() ?: 0))
         }
-        else
-            call.respond(HttpStatusCode.BadRequest, "Token isn`t valid")
     }
 
     suspend fun getGoodsInParts(getGoodsInPartsRequest: GetGoodsInPartsRequest, token: String?) {
-        if (checkToken(token)) {
+        call.checkToken(token) {
             val goods = Goods.getPartOfGoods(getGoodsInPartsRequest.index)
             goods?.run {
                 call.respond(GetGoodsInPartsResponse(this))
             } ?: call.respond(HttpStatusCode.BadRequest, "No goods")
         }
-        else
-            call.respond(HttpStatusCode.BadRequest, "Token isn`t valid")
     }
 
 
     suspend fun getGoodById(token: String?, goodId: Int) {
-        if (checkToken(token)) {
+        call.checkToken(token) {
             val good = Goods.getGoodById(goodId)
             good?.let {
                 call.respond(GetGoodByIdResponse(it))
             } ?: call.respond(HttpStatusCode.BadRequest, "No such good")
         }
-        else
-            call.respond(HttpStatusCode.BadRequest, "Token isn`t valid")
     }
 
 

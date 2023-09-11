@@ -1,5 +1,8 @@
 package ru.gozerov.database.tokens
 
+import io.ktor.http.*
+import io.ktor.server.application.*
+import io.ktor.server.response.*
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
@@ -30,4 +33,10 @@ object Tokens : Table(name = "tokens"){
     }
 }
 
-fun checkToken(token: String?): Boolean = Tokens.getTokens().firstOrNull { it.token == token } != null
+suspend fun ApplicationCall.checkToken(token: String?, onValidToken: suspend (token: String) -> Unit) {
+    val t = Tokens.getTokens().firstOrNull { it.token == token }
+    if (t != null )  {
+        onValidToken(t.token)
+    } else
+        respond(HttpStatusCode.BadRequest, "Token isn`t valid")
+}

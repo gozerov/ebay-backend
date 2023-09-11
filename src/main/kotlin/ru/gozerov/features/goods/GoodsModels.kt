@@ -1,6 +1,7 @@
 package ru.gozerov.features.goods
 
 import kotlinx.serialization.Serializable
+import ru.gozerov.features.reviews.Review
 
 
 @Serializable
@@ -9,7 +10,8 @@ data class GoodRemote(
     val name: String,
     val description: String,
     val price: Int,
-    val images: List<String>?
+    val images: List<String>?,
+    val reviews: List<Review>? = null
 )
 
 @Serializable

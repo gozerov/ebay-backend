@@ -5,11 +5,13 @@ import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.Database.Companion
+import ru.gozerov.database.sales.configureSalesRouting
 import ru.gozerov.features.confirm_password.configurePasswordsRouting
 import ru.gozerov.features.email.configureEmailRouting
 import ru.gozerov.features.goods.configureGoodsRouting
 import ru.gozerov.features.login.configureLoginRouting
 import ru.gozerov.features.register.configureRegisterRouting
+import ru.gozerov.features.reviews.configureReviewRouting
 import ru.gozerov.features.verification.configureVerificationRouting
 import ru.gozerov.plugins.configureRouting
 import ru.gozerov.plugins.configureSerialization
@@ -34,4 +36,6 @@ fun Application.module() {
     configurePasswordsRouting()
     configureRegisterRouting()
     configureGoodsRouting()
+    configureReviewRouting()
+    configureSalesRouting()
 }

@@ -4,11 +4,13 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import ru.gozerov.database.reviews.Reviews
+import ru.gozerov.database.reviews.toReview
 import ru.gozerov.features.goods.GoodRemote
 
 object Goods : Table("goods") {
 
-    private val vendorCode = Goods.integer("vendor_code").autoIncrement()
+    private val vendorCode = Goods.integer("vendor_code")
     private val name = Goods.varchar("name", 50)
     private val description = Goods.varchar("description", 250)
     private val price = Goods.integer("price")
@@ -25,18 +27,21 @@ object Goods : Table("goods") {
         }
     }
 
-    fun getGoods(): List<GoodDTO>? = transaction{
+    fun getGoods(): List<GoodRemote>? = transaction{
         val goods = Goods.selectAll().toList()
-        return@transaction if (goods.isEmpty()) null else
+        return@transaction if (goods.isEmpty()) null else {
             goods.map { good ->
-                GoodDTO(
+                val reviews = Reviews.getReviewsByGoodId(goodId = good[vendorCode]).map { it.toReview() }
+                GoodRemote(
                     vendorCode = good[vendorCode],
                     name = good[name],
                     description = good[description],
                     price = good[price],
-                    images = good[images]?.run { Json.decodeFromString(this) }
+                    images = good[images]?.run { Json.decodeFromString(this) },
+                    reviews = reviews.ifEmpty { null }
                 )
             }
+        }
     }
     fun getGoodsSize(): Int? = transaction {
         val query = GoodsSizeQuery(Goods).execute(this)
@@ -51,13 +56,16 @@ object Goods : Table("goods") {
         val goods = mutableListOf<GoodRemote>()
         if (query == null) throw Exception("Query is null")
         while (query.next()) {
+            val vendorCode = query.getInt(vendorCode.name)
+            val reviews = Reviews.getReviewsByGoodId(goodId = vendorCode).map { it.toReview() }
             goods.add(
                 GoodRemote(
-                    vendorCode = query.getInt(vendorCode.name),
+                    vendorCode = vendorCode,
                     name = query.getString(name.name),
                     description = query.getString(description.name),
                     price = query.getInt(price.name),
-                    images = query.getString(images.name)?.run { Json.decodeFromString(this) }
+                    images = query.getString(images.name)?.run { Json.decodeFromString(this) },
+                    reviews = reviews
                 )
             )
         }
@@ -71,12 +79,14 @@ object Goods : Table("goods") {
     fun getGoodById(id: Int) : GoodRemote? = transaction {
         val good = Goods.select { vendorCode.eq(id) }.firstOrNull()
         return@transaction good?.let {
+            val reviews = Reviews.getReviewsByGoodId(goodId = good[vendorCode]).map { it.toReview() }
             GoodRemote(
                 vendorCode = good[vendorCode],
                 name = good[name],
                 description = good[description],
                 price = good[price],
-                images = good[images]?.run { Json.decodeFromString(this) }
+                images = good[images]?.run { Json.decodeFromString(this) },
+                reviews = reviews
             )
         }
     }
