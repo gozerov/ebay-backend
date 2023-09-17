@@ -64,6 +64,13 @@ class GoodsController(
             } ?: call.respond(HttpStatusCode.BadRequest, "No goods")
         }
     }
+    suspend fun getGoodsPack(token: String?) {
+        call.checkToken(token) {
+            val goodsPack = Goods.getGoodsPack()
+            call.respond(GetGoodsPackResponse(goodsPack))
+        }
+    }
+
 
 
     suspend fun getGoodById(token: String?, goodId: Int) {
@@ -75,5 +82,19 @@ class GoodsController(
         }
     }
 
+    suspend fun getCategories(token: String?) {
+        call.checkToken(token) {
+            call.respond(GetCategoriesResponse(Goods.getCategories()))
+        }
+     }
+
+    suspend fun getGoodsByCategory(token: String?, category: String) {
+        call.checkToken(token) {
+            val pair = Goods.getGoodsByCategory(category)
+            pair?.run {
+                call.respond(GetGoodsByCategoryResponse(this.first, this.second))
+            } ?: call.respond(HttpStatusCode.BadRequest, "Incorrect name")
+        }
+    }
 
 }

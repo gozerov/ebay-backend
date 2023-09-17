@@ -1,6 +1,7 @@
 package ru.gozerov.features.goods
 
 import kotlinx.serialization.Serializable
+import ru.gozerov.database.goods.Category
 import ru.gozerov.features.reviews.Review
 
 
@@ -48,6 +49,22 @@ data class GetGoodsInPartsResponse(
 )
 
 @Serializable
+data class GetGoodsPackResponse(
+    val value: Map<String, List<GoodRemote>?>
+)
+
+@Serializable
 data class GetGoodByIdResponse(
     val good: GoodRemote
+)
+
+@Serializable
+data class GetCategoriesResponse(
+    val value: List<Category>
+)
+
+@Serializable
+data class GetGoodsByCategoryResponse(
+    val category: Category,
+    val goods: List<GoodRemote>?
 )
