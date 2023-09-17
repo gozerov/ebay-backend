@@ -12,7 +12,8 @@ data class GoodRemote(
     val description: String,
     val price: Int,
     val images: List<String>?,
-    val reviews: List<Review>? = null
+    val reviews: List<Review>? = null,
+    val rating: Double? = null
 )
 
 @Serializable

@@ -8,6 +8,7 @@ import ru.gozerov.database.goods.Goods.SMALL_PART_GOODS
 import ru.gozerov.database.reviews.Reviews
 import ru.gozerov.database.reviews.toReview
 import ru.gozerov.features.goods.GoodRemote
+import java.math.RoundingMode
 
 object Goods : Table("goods") {
 
@@ -33,13 +34,15 @@ object Goods : Table("goods") {
         return@transaction if (goods.isEmpty()) null else {
             goods.map { good ->
                 val reviews = Reviews.getReviewsByGoodId(goodId = good[vendorCode]).map { it.toReview() }
+                val rating = reviews.sumOf { it.rating }
                 GoodRemote(
                     vendorCode = good[vendorCode],
                     name = good[name],
                     description = good[description],
                     price = good[price],
                     images = good[images]?.run { Json.decodeFromString(this) },
-                    reviews = reviews.ifEmpty { null }
+                    reviews = reviews.ifEmpty { null },
+                    rating = if (rating == 0.0) null else rating.toBigDecimal().setScale(1, RoundingMode.HALF_UP).toDouble()
                 )
             }
         }
@@ -54,13 +57,15 @@ object Goods : Table("goods") {
                 query.next()
                 val vendorCode = query.getInt(vendorCode.name)
                 val reviews = Reviews.getReviewsByGoodId(goodId = vendorCode).map { it.toReview() }
+                val rating = reviews.sumOf { it.rating }
                 val good = GoodRemote(
                     vendorCode = vendorCode,
                     name = query.getString(name.name),
                     description = query.getString(description.name),
                     price = query.getInt(price.name),
                     images = query.getString(images.name)?.run { Json.decodeFromString(this) },
-                    reviews = reviews
+                    reviews = reviews,
+                    rating = if (rating == 0.0) null else rating.toBigDecimal().setScale(1, RoundingMode.HALF_UP).toDouble()
                 )
                 goods.add(good)
             }
@@ -83,6 +88,7 @@ object Goods : Table("goods") {
         while (query.next()) {
             val vendorCode = query.getInt(vendorCode.name)
             val reviews = Reviews.getReviewsByGoodId(goodId = vendorCode).map { it.toReview() }
+            val rating = reviews.sumOf { it.rating }
             goods.add(
                 GoodRemote(
                     vendorCode = vendorCode,
@@ -90,7 +96,8 @@ object Goods : Table("goods") {
                     description = query.getString(description.name),
                     price = query.getInt(price.name),
                     images = query.getString(images.name)?.run { Json.decodeFromString(this) },
-                    reviews = reviews
+                    reviews = reviews,
+                    rating = if (rating == 0.0) null else rating.toBigDecimal().setScale(1, RoundingMode.HALF_UP).toDouble()
                 )
             )
         }
@@ -105,13 +112,15 @@ object Goods : Table("goods") {
         val good = Goods.select { vendorCode.eq(id) }.firstOrNull()
         return@transaction good?.let {
             val reviews = Reviews.getReviewsByGoodId(goodId = good[vendorCode]).map { it.toReview() }
+            val rating = reviews.sumOf { it.rating }
             GoodRemote(
                 vendorCode = good[vendorCode],
                 name = good[name],
                 description = good[description],
                 price = good[price],
                 images = good[images]?.run { Json.decodeFromString(this) },
-                reviews = reviews
+                reviews = reviews,
+                rating = if (rating == 0.0) null else rating.toBigDecimal().setScale(1, RoundingMode.HALF_UP).toDouble()
             )
         }
     }
@@ -124,13 +133,15 @@ object Goods : Table("goods") {
         return@transaction if (goods.isEmpty() || category == null) null else {
             category to goods.map { good ->
                 val reviews = Reviews.getReviewsByGoodId(goodId = good[vendorCode]).map { it.toReview() }
+                val rating = reviews.sumOf { it.rating }
                 GoodRemote(
                     vendorCode = good[vendorCode],
                     name = good[this@Goods.name],
                     description = good[description],
                     price = good[price],
                     images = good[images]?.run { Json.decodeFromString(this) },
-                    reviews = reviews.ifEmpty { null }
+                    reviews = reviews.ifEmpty { null },
+                    rating = if (rating == 0.0) null else rating.toBigDecimal().setScale(1, RoundingMode.HALF_UP).toDouble()
                 )
             }
         }
