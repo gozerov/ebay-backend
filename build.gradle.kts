@@ -23,8 +23,18 @@ application {
 }
 
 ktor {
-    fatJar {
-        archiveFileName.set("fat.jar")
+    docker {
+        jreVersion.set(io.ktor.plugin.features.JreVersion.JRE_17)
+        localImageName.set("sample-docker-image")
+        imageTag.set("0.0.1-preview")
+
+        externalRegistry.set(
+            io.ktor.plugin.features.DockerImageRegistry.dockerHub(
+                appName = provider { "ktor-app" },
+                username = providers.environmentVariable("ebay_android"),
+                password = providers.environmentVariable("EbayAndroid123")
+            )
+        )
     }
 }
 repositories {
