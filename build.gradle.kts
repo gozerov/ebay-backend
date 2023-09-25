@@ -5,6 +5,7 @@ val logback_version: String by project
 val exposed_version: String by project
 val h2_version: String by project
 val postgresql_version: String by project
+val mysql_connector_version: String by project
 
 plugins {
     kotlin("jvm") version "1.9.0"
@@ -22,21 +23,6 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-ktor {
-    docker {
-        jreVersion.set(io.ktor.plugin.features.JreVersion.JRE_17)
-        localImageName.set("sample-docker-image")
-        imageTag.set("0.0.1-preview")
-
-        externalRegistry.set(
-            io.ktor.plugin.features.DockerImageRegistry.dockerHub(
-                appName = provider { "ktor-app" },
-                username = providers.environmentVariable("ebay_android"),
-                password = providers.environmentVariable("EbayAndroid123")
-            )
-        )
-    }
-}
 repositories {
     mavenCentral()
 }
@@ -44,7 +30,7 @@ repositories {
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
-    implementation("io.ktor:ktor-server-cio-jvm")
+    implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("ch.qos.logback:logback-classic:$logback_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
 

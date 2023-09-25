@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: on-failure
+    ports:
+      - "5433:5433"
+  app:
+    build: .
+    restart: always
+    depends_on:
+      - db
+
+
+
+volumes:
+  pgdata:
