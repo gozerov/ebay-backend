@@ -15,7 +15,7 @@ import ru.gozerov.features.verification.configureVerificationRouting
 import ru.gozerov.plugins.configureSerialization
 
 fun main() {
-    val url = "jdbc:postgresql://host.docker.internal:5433/ebay"
+    val url = "jdbc:postgresql://localhost:5433/ebay"
     val user = "postgres"
     val password = "StrongPssw1"
     val driverClassName = "org.postgresql.Driver"
