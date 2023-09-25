@@ -1,8 +1,8 @@
 package ru.gozerov
 
 import io.ktor.server.application.*
+import io.ktor.server.cio.*
 import io.ktor.server.engine.*
-import io.ktor.server.netty.*
 import org.jetbrains.exposed.sql.Database
 import ru.gozerov.database.sales.configureSalesRouting
 import ru.gozerov.features.confirm_password.configurePasswordsRouting
@@ -15,7 +15,7 @@ import ru.gozerov.features.verification.configureVerificationRouting
 import ru.gozerov.plugins.configureSerialization
 
 fun main() {
-    val url = "jdbc:postgresql://localhost:5433/ebay"
+    val url = "jdbc:postgresql://host.docker.internal:5433/ebay"
     val user = "postgres"
     val password = "StrongPssw1"
     val driverClassName = "org.postgresql.Driver"
@@ -25,7 +25,7 @@ fun main() {
         driver = driverClassName,
         password = password
     )
-    embeddedServer(Netty, port = 8090, host = "0.0.0.0", module = Application::module)
+    embeddedServer(CIO, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }
 
