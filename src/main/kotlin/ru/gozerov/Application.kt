@@ -23,8 +23,8 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
-    configureDatabase()
     configureSerialization()
+    configureDatabase()
     configureLoginRouting()
     configureEmailRouting()
     configureVerificationRouting()
