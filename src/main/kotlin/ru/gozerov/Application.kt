@@ -2,6 +2,7 @@ package ru.gozerov
 
 import io.ktor.server.application.*
 import io.ktor.server.config.*
+import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import kotlinx.coroutines.Dispatchers
 import org.flywaydb.core.Flyway
@@ -17,9 +18,7 @@ import ru.gozerov.features.reviews.configureReviewRouting
 import ru.gozerov.features.verification.configureVerificationRouting
 import ru.gozerov.plugins.configureSerialization
 
-fun main(args: Array<String>) {
-    EngineMain.main(args)
-}
+fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.module() {
     configureSerialization()
