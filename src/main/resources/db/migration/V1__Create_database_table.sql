@@ -6,9 +6,10 @@ CREATE TABLE IF NOT EXISTS public.goods
     price integer NOT NULL,
     images character varying(1024) COLLATE pg_catalog."default",
     CONSTRAINT goods_pkey PRIMARY KEY (vendor_code)
-)
+);
 
-TABLESPACE pg_default;
+alter table public."goods"
+    owner to postgres;
 
 CREATE TABLE IF NOT EXISTS public.reviews
 (
@@ -19,9 +20,10 @@ CREATE TABLE IF NOT EXISTS public.reviews
     added_ago character varying(50) COLLATE pg_catalog."default",
     body character varying(300) COLLATE pg_catalog."default",
     CONSTRAINT reviews_pkey PRIMARY KEY (id)
-)
+);
 
-TABLESPACE pg_default;
+alter table public."reviews"
+    owner to postgres;
 
 CREATE TABLE IF NOT EXISTS public.tokens
    (
@@ -29,9 +31,10 @@ CREATE TABLE IF NOT EXISTS public.tokens
        token character varying(75) COLLATE pg_catalog."default" NOT NULL,
        user_id integer NOT NULL,
        CONSTRAINT tokens_pkey PRIMARY KEY (id)
-   )
+   );
 
-   TABLESPACE pg_default;
+alter table public."tokens"
+    owner to postgres;
 
 CREATE TABLE IF NOT EXISTS public.users
 (
@@ -41,9 +44,10 @@ CREATE TABLE IF NOT EXISTS public.users
     email character varying(50) COLLATE pg_catalog."default" NOT NULL,
     avatar character varying(100) COLLATE pg_catalog."default",
     CONSTRAINT users_pkey PRIMARY KEY (id, email)
-)
+);
 
-TABLESPACE pg_default;
+alter table public."users"
+    owner to postgres;
 
 CREATE TABLE IF NOT EXISTS public.verification_tokens
 (
@@ -51,6 +55,7 @@ CREATE TABLE IF NOT EXISTS public.verification_tokens
     code integer NOT NULL,
     email character varying(50) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT verification_tokens_pkey PRIMARY KEY (token)
-)
+);
 
-TABLESPACE pg_default;
+alter table public."verification_tokens"
+    owner to postgres;
