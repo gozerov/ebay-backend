@@ -8,9 +8,6 @@ CREATE TABLE IF NOT EXISTS public.goods
     CONSTRAINT goods_pkey PRIMARY KEY (vendor_code)
 );
 
-alter table public."goods"
-    owner to postgres;
-
 CREATE TABLE IF NOT EXISTS public.reviews
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
@@ -22,9 +19,6 @@ CREATE TABLE IF NOT EXISTS public.reviews
     CONSTRAINT reviews_pkey PRIMARY KEY (id)
 );
 
-alter table public."reviews"
-    owner to postgres;
-
 CREATE TABLE IF NOT EXISTS public.tokens
    (
        id character varying(50) COLLATE pg_catalog."default" NOT NULL,
@@ -32,9 +26,6 @@ CREATE TABLE IF NOT EXISTS public.tokens
        user_id integer NOT NULL,
        CONSTRAINT tokens_pkey PRIMARY KEY (id)
    );
-
-alter table public."tokens"
-    owner to postgres;
 
 CREATE TABLE IF NOT EXISTS public.users
 (
@@ -46,9 +37,6 @@ CREATE TABLE IF NOT EXISTS public.users
     CONSTRAINT users_pkey PRIMARY KEY (id, email)
 );
 
-alter table public."users"
-    owner to postgres;
-
 CREATE TABLE IF NOT EXISTS public.verification_tokens
 (
     token character varying(75) COLLATE pg_catalog."default" NOT NULL,
@@ -56,6 +44,3 @@ CREATE TABLE IF NOT EXISTS public.verification_tokens
     email character varying(50) COLLATE pg_catalog."default" NOT NULL,
     CONSTRAINT verification_tokens_pkey PRIMARY KEY (token)
 );
-
-alter table public."verification_tokens"
-    owner to postgres;
