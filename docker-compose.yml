@@ -19,7 +19,7 @@ services:
     container_name: backend-ktor
     restart: always
     ports:
-      - "8080:8080"
+      - "8090:8090"
     env_file:
       - postgres.env
     depends_on:
