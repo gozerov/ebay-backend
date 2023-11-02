@@ -10,12 +10,17 @@ fun Application.configureGoodsRouting() {
             val token = call.request.headers["Bearer-Authorization"]
             val page = call.request.queryParameters["page"]?.toInt() ?: -1
             val goodId = call.request.queryParameters["id"]?.toInt() ?: -1
+            val name = call.request.queryParameters["name"].toString()
             val category = call.request.queryParameters["category"].toString()
             val goodsController = GoodsController(call)
             if (page == -1) {
                 if (goodId == -1) {
-                    if (category.isEmpty())
-                        goodsController.getGoods(token)
+                    if (category == "null") {
+                        if (name == "null")
+                            goodsController.getGoods(token)
+                        else
+                            goodsController.searchProductsByName(token, name)
+                    }
                     else
                         goodsController.getGoodsByCategory(token, category)
                 } else

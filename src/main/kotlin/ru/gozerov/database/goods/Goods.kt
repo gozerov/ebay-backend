@@ -147,6 +147,29 @@ object Goods : Table("goods") {
         }
     }
 
+    fun searchProductsByName(name: String) : List<GoodRemote>? = transaction  {
+        val query = SearchProductsByNameQuery(name, this@Goods).execute(this)
+        val goods = mutableListOf<GoodRemote>()
+        if (query == null) throw Exception("Query is null")
+        while (query.next()) {
+            val vendorCode = query.getInt(vendorCode.name)
+            val reviews = Reviews.getReviewsByGoodId(goodId = vendorCode).map { it.toReview() }
+            val rating = reviews.sumOf { it.rating }
+            goods.add(
+                GoodRemote(
+                    vendorCode = vendorCode,
+                    name = query.getString(Goods.name.name),
+                    description = query.getString(description.name),
+                    price = query.getInt(price.name),
+                    images = query.getString(images.name)?.run { Json.decodeFromString(this) },
+                    reviews = reviews,
+                    rating = if (rating == 0.0) null else rating.toBigDecimal().setScale(1, RoundingMode.HALF_UP).toDouble()
+                )
+            )
+        }
+        return@transaction goods
+    }
+
     const val SMALL_PART_GOODS = 5
 
     private val CATEGORIES = listOf(
@@ -199,6 +222,20 @@ data class GoodsSizeQuery(private val table: Table) : Query(table, null) {
     override fun prepareSQL(builder: QueryBuilder): String {
         builder {
             append("SELECT count(\"vendor_code\") FROM ${table.tableName}")
+        }
+        return builder.toString()
+    }
+
+}
+
+data class SearchProductsByNameQuery(
+    private val name: String,
+    private val table: Table
+) : Query(table, null) {
+
+    override fun prepareSQL(builder: QueryBuilder): String {
+        builder {
+            append("SELECT * FROM ${table.tableName} WHERE name LIKE '%$name%'")
         }
         return builder.toString()
     }

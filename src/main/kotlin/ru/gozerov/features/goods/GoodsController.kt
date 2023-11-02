@@ -3,6 +3,7 @@ package ru.gozerov.features.goods
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
+import org.jetbrains.exposed.sql.selectAll
 import ru.gozerov.database.goods.GoodDTO
 import ru.gozerov.database.goods.Goods
 import ru.gozerov.database.tokens.checkToken
@@ -94,6 +95,18 @@ class GoodsController(
             pair?.run {
                 call.respond(GetGoodsByCategoryResponse(this.first, this.second))
             } ?: call.respond(HttpStatusCode.BadRequest, "Incorrect name")
+        }
+    }
+
+    suspend fun searchProductsByName(token: String?, name: String) {
+        call.checkToken(token) {
+            if (name.isNotEmpty()) {
+                val goods = Goods.searchProductsByName(name)
+                goods?.let {
+                    call.respond(GetGoodsResponse(goods))
+                }
+            } else
+                call.respond(HttpStatusCode.BadRequest, "No product name")
         }
     }
 
